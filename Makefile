@@ -1,21 +1,24 @@
-ifeq ($(shell uname -p), i386)
-	HOST_ARCH = amd64
-else ifeq ($(shell uname -p), x86_64)
-	HOST_ARCH = amd64
-else
-	HOST_ARCH = arm64v8
-endif
+.ONESHELL:
+.PHONY: clean build release run run-docker
+default: run
 
-.PHONY: clean build run
-
-default: clean build
+APP_NAME=$(shell basename $(CURDIR))
+HOST_OS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
+HOST_ARCH=$(shell uname -m | tr '[:upper:]' '[:lower:]')
+DIST_DIR=$(CURDIR)/dist
 
 clean:
-	rm -rf dist
+	rm -rf $(DIST_DIR)
 
-build:
-	CONTAINER_NAME=$(shell basename $(CURDIR)) goreleaser release --snapshot --rm-dist
-	docker images $(shell basename $(CURDIR))
+build: clean
+	CONTAINER_NAME=$(APP_NAME) goreleaser build --snapshot --single-target --rm-dist
 
-run: clean build
-	docker run -e USE_KUBECONFIG=true -v ~/.kube/config:/.kube/config --rm $(shell basename $(CURDIR)):latest-$(HOST_ARCH)
+run: build
+	$(DIST_DIR)/$(APP_NAME)_$(HOST_OS)_$(HOST_ARCH)/$(APP_NAME)
+
+release:
+	CONTAINER_NAME=$(APP_NAME) goreleaser release --snapshot --rm-dist
+	docker images $(APP_NAME)
+
+run-docker: release
+	docker run -v ~/.kube/config:/root/.kube/config --rm $(APP_NAME):latest-$(HOST_ARCH)

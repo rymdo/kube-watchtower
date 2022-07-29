@@ -40,8 +40,8 @@ dockers:
     build_flag_templates:
       - "--platform=linux/amd64"
   - image_templates:
-    - "{{ .Env.CONTAINER_NAME }}:{{ .Tag }}-arm64v8"
-    - "{{ .Env.CONTAINER_NAME }}:latest-arm64v8"
+    - "{{ .Env.CONTAINER_NAME }}:{{ .Tag }}-arm64"
+    - "{{ .Env.CONTAINER_NAME }}:latest-arm64"
     use: buildx
     goarch: arm64
     build_flag_templates:
@@ -50,8 +50,8 @@ docker_manifests:
   - name_template: "{{ .Env.CONTAINER_NAME }}:{{ .Tag }}"
     image_templates:
     - "{{ .Env.CONTAINER_NAME }}:{{ .Tag }}-amd64"
-    - "{{ .Env.CONTAINER_NAME }}:{{ .Tag }}-arm64v8"
+    - "{{ .Env.CONTAINER_NAME }}:{{ .Tag }}-arm64"
   - name_template: "{{ .Env.CONTAINER_NAME }}:latest"
     image_templates:
     - "{{ .Env.CONTAINER_NAME }}:latest-amd64"
-    - "{{ .Env.CONTAINER_NAME }}:latest-arm64v8"
+    - "{{ .Env.CONTAINER_NAME }}:latest-arm64"
