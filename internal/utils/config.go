@@ -1,4 +1,4 @@
-package config
+package utils
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-func init() {
-	config = &Config{}
+func NewConfig(logger *Logger) *Config {
+	config := Config{}
 
 	// Context
 	config.Ctx = context.Background()
@@ -22,6 +22,8 @@ func init() {
 	} else {
 		config.KubeconfigExists = false
 	}
+	logger.Infof("%+v", config)
+	return &config
 }
 
 func getHomeDir() string {
@@ -30,8 +32,4 @@ func getHomeDir() string {
 		panic(err.Error())
 	}
 	return dir
-}
-
-func GetConfig() *Config {
-	return config
 }

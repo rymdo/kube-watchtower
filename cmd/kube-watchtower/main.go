@@ -1,16 +1,14 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/rymdo/kube-watchtower/v2/internal/config"
 	"github.com/rymdo/kube-watchtower/v2/internal/kubernetes"
+	"github.com/rymdo/kube-watchtower/v2/internal/utils"
 )
 
 func main() {
-	fmt.Println("Hello, World!")
-
-	cfg := config.GetConfig()
-
-	_ = kubernetes.New(cfg)
+	logger := utils.NewLogger()
+	logger.Info("started")
+	cfg := utils.NewConfig(logger)
+	k := kubernetes.New(logger, cfg)
+	k.GetNodes()
 }
