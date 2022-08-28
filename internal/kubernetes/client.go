@@ -4,9 +4,6 @@ import (
 	"time"
 
 	"github.com/rymdo/kube-watchtower/v2/internal/utils"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/fields"
-	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -66,19 +63,4 @@ func configKubeconfig(kubeconfigPath string) *rest.Config {
 		panic(err.Error())
 	}
 	return config
-}
-
-func (k *Kubernetes) GetNodes() []string {
-	var ListEverything = v1.ListOptions{
-		LabelSelector: labels.Everything().String(),
-		FieldSelector: fields.Everything().String(),
-	}
-	res, err := k.client.CoreV1().Nodes().List(k.cfg.Ctx, ListEverything)
-	if err != nil {
-		panic(err.Error())
-	}
-	for _, s := range res.Items {
-		k.logger.Info(s.Name)
-	}
-	return []string{}
 }
