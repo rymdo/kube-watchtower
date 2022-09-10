@@ -25,7 +25,7 @@ func (k *Kubernetes) GetStatefulsets() []Resource {
 			})
 		}
 		result = append(result, Resource{
-			Type:        Statefulsets,
+			Type:        Statefulset,
 			Name:        s.Name,
 			Namespace:   s.Namespace,
 			Annotations: s.Annotations,

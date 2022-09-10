@@ -25,7 +25,7 @@ func (k *Kubernetes) GetDaemonsets() []Resource {
 			})
 		}
 		result = append(result, Resource{
-			Type:        Daemonsets,
+			Type:        Daemonset,
 			Name:        s.Name,
 			Namespace:   s.Namespace,
 			Annotations: s.Annotations,

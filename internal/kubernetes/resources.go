@@ -1,6 +1,6 @@
 package kubernetes
 
-func (k *Kubernetes) GetResource() []Resource {
+func (k *Kubernetes) GetResources() []Resource {
 	resources := []Resource{}
 	resources = append(resources, k.GetDeployments()...)
 	resources = append(resources, k.GetStatefulsets()...)

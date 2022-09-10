@@ -3,9 +3,9 @@ package kubernetes
 type ResourceType string
 
 const (
-	Deployment   ResourceType = "deployment"
-	Statefulsets ResourceType = "statefulsets"
-	Daemonsets   ResourceType = "daemonsets"
+	Deployment  ResourceType = "deployment"
+	Statefulset ResourceType = "statefulset"
+	Daemonset   ResourceType = "daemonset"
 )
 
 type ResourceContainer struct {

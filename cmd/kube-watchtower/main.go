@@ -10,5 +10,5 @@ func main() {
 	logger.Info("started")
 	cfg := utils.NewConfig(logger)
 	k := kubernetes.New(logger, cfg)
-	logger.Infof("%+v", k.GetResource())
+	logger.Infof("%+v", k.GetResources())
 }
