@@ -1,22 +1,49 @@
 package kubernetes
 
-type ResourceType string
-
-const (
-	Deployment  ResourceType = "deployment"
-	Statefulset ResourceType = "statefulset"
-	Daemonset   ResourceType = "daemonset"
-)
-
-type ResourceContainer struct {
-	Name  string
-	Image string
+type Owner struct {
+	Name string
+	Kind string
 }
 
-type Resource struct {
-	Type        ResourceType
+type Container struct {
+	Name    string
+	Image   string
+	ImageID string
+}
+
+type Pod struct {
 	Name        string
 	Namespace   string
 	Annotations map[string]string
-	Containers  []ResourceContainer
+	Containers  []Container
+	Owner       Owner
+}
+
+type ReplicaSet struct {
+	Name        string
+	Namespace   string
+	Annotations map[string]string
+	Pods        []Pod
+	Owner       Owner
+}
+
+type Deployment struct {
+	Name        string
+	Namespace   string
+	Annotations map[string]string
+	ReplicaSets []ReplicaSet
+}
+
+type StatefulSet struct {
+	Name        string
+	Namespace   string
+	Annotations map[string]string
+	Pods        []Pod
+}
+
+type DaemonSet struct {
+	Name        string
+	Namespace   string
+	Annotations map[string]string
+	Pods        []Pod
 }

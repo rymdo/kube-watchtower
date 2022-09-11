@@ -6,31 +6,36 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 )
 
-func (k *Kubernetes) GetDaemonsets() []Resource {
-	result := []Resource{}
-	var ListEverything = v1.ListOptions{
+func (k *Kubernetes) GetDaemonsets() []DaemonSet {
+	result := []DaemonSet{}
+	var listEverything = v1.ListOptions{
 		LabelSelector: labels.Everything().String(),
 		FieldSelector: fields.Everything().String(),
 	}
-	res, err := k.client.AppsV1().DaemonSets("").List(k.cfg.Ctx, ListEverything)
+	res, err := k.client.AppsV1().DaemonSets("").List(k.cfg.Ctx, listEverything)
 	if err != nil {
 		panic(err.Error())
 	}
-	for _, s := range res.Items {
-		containers := []ResourceContainer{}
-		for _, c := range s.Spec.Template.Spec.Containers {
-			containers = append(containers, ResourceContainer{
-				Name:  c.Name,
-				Image: c.Image,
-			})
+	pods := k.GetPods()
+	for _, daemonset := range res.Items {
+		item := DaemonSet{
+			Name:        daemonset.Name,
+			Namespace:   daemonset.Namespace,
+			Annotations: daemonset.Annotations,
 		}
-		result = append(result, Resource{
-			Type:        Daemonset,
-			Name:        s.Name,
-			Namespace:   s.Namespace,
-			Annotations: s.Annotations,
-			Containers:  containers,
-		})
+
+		// Add pods
+		for _, pod := range pods {
+			if pod.Owner.Name != daemonset.Name {
+				continue
+			}
+			if pod.Owner.Kind != "DaemonSet" {
+				continue
+			}
+			item.Pods = append(item.Pods, pod)
+		}
+
+		result = append(result, item)
 	}
 	return result
 }

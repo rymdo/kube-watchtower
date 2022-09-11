@@ -6,31 +6,41 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 )
 
-func (k *Kubernetes) GetStatefulsets() []Resource {
-	result := []Resource{}
-	var ListEverything = v1.ListOptions{
+func (k *Kubernetes) GetStatefulsets() []StatefulSet {
+	result := []StatefulSet{}
+	var listEverything = v1.ListOptions{
 		LabelSelector: labels.Everything().String(),
 		FieldSelector: fields.Everything().String(),
 	}
-	res, err := k.client.AppsV1().StatefulSets("").List(k.cfg.Ctx, ListEverything)
+	res, err := k.client.AppsV1().StatefulSets("").List(k.cfg.Ctx, listEverything)
 	if err != nil {
 		panic(err.Error())
 	}
-	for _, s := range res.Items {
-		containers := []ResourceContainer{}
-		for _, c := range s.Spec.Template.Spec.Containers {
-			containers = append(containers, ResourceContainer{
-				Name:  c.Name,
-				Image: c.Image,
-			})
+	pods := k.GetPods()
+	for _, statefulset := range res.Items {
+		item := StatefulSet{
+			Name:        statefulset.Name,
+			Namespace:   statefulset.Namespace,
+			Annotations: statefulset.Annotations,
 		}
-		result = append(result, Resource{
-			Type:        Statefulset,
-			Name:        s.Name,
-			Namespace:   s.Namespace,
-			Annotations: s.Annotations,
-			Containers:  containers,
-		})
+
+		// Filter non-active statefulsets
+		if *statefulset.Spec.Replicas == 0 {
+			continue
+		}
+
+		// Add pods
+		for _, pod := range pods {
+			if pod.Owner.Name != statefulset.Name {
+				continue
+			}
+			if pod.Owner.Kind != "StatefulSet" {
+				continue
+			}
+			item.Pods = append(item.Pods, pod)
+		}
+
+		result = append(result, item)
 	}
 	return result
 }

@@ -10,5 +10,19 @@ func main() {
 	logger.Info("started")
 	cfg := utils.NewConfig(logger)
 	k := kubernetes.New(logger, cfg)
-	logger.Infof("%+v", k.GetResources())
+
+	logger.Info("deployments")
+	for _, item := range k.GetDeployments() {
+		logger.Infof("%+v", item)
+	}
+
+	logger.Info("stagefulsets")
+	for _, item := range k.GetStatefulsets() {
+		logger.Infof("%+v", item)
+	}
+
+	logger.Info("daemonsets")
+	for _, item := range k.GetDaemonsets() {
+		logger.Infof("%+v", item)
+	}
 }
